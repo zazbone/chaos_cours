@@ -1,0 +1,13 @@
+__pycache__
+
+# virtual env
+venv
+env
+.venv
+.env
+
+# code
+.vscode
+
+# Egg
+*.egg*
