@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 
 
 def plot_2D(x, y):
-    plt.plot(x, y, marker='.', linestyle = 'None')
+    plt.plot(x, y, marker='.', linestyle = 'None', markersize=0.1)
     plt.xlabel("x")
     plt.ylabel("y")
     plt.show()
