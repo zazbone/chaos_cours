@@ -21,10 +21,22 @@ def step(func, t, h, y, **kwargs):
     return h * (b * k1 + a * k2 + a * k3 + b * k4)
 
 
-def integr(t0, dt, CI: np.ndarray, func: list, **kwargs):
+def integr(t0: float, dt: float, CI: np.ndarray, func: tuple, **kwargs) -> np.ndarray:
     """\
-    **kwargs: all possible fuctions extra arguments constant
-    func: function array that contains all function to integrate
+    4rd ordre Runge-kutta algorithm implémentation for n variables
+    Compute only one step
+
+    t0: init_time 
+        (must be an argument of your integration function, event if time does not interfer in the system)
+    dt: time interval of the numerical integration
+    CI: List of the initial condition values
+    func: function array that contains all function to integrate, can be any sequence of callable objects
+    **kwargs: all possible fuctions extra arguments constant (name all your arguments to avoid conflicts)
+
+    return: numpy ndarray of shape=n where n is the numbre of init conditions
+        Contains CI integral
+
+    See lorentz.py for an example with lorentz attractor system\
     """
     len_ci = len(CI)
     if len_ci != len(func):
