@@ -36,7 +36,6 @@ def lorentz():
         TRAJECTORY[... ,i] = point
 
 
-    fig = plt.figure()
     ax = plt.axes(projection="3d")
     ax.plot3D(xs=TRAJECTORY[0], ys=TRAJECTORY[1], zs=TRAJECTORY[2], color="blue")
     plt.show()
