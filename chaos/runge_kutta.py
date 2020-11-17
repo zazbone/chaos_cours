@@ -1,3 +1,7 @@
+import numpy as np
+
+
+# Only work for one function
 def step(func, t, h, y, **kwargs):
     """\
     4rd ordre Runge-kutta algorithm implémentation
@@ -17,73 +21,103 @@ def step(func, t, h, y, **kwargs):
     return h * (b * k1 + a * k2 + a * k3 + b * k4)
 
 
+def integr(t0, dt, CI: np.ndarray, func: list, **kwargs):
+    """\
+    **kwargs: all possible fuctions extra arguments constant
+    func: function array that contains all function to integrate
+    """
+    len_ci = len(CI)
+    if len_ci != len(func):
+        raise ValueError("func array must have the same size as CI array")
+
+    k = np.zeros(shape=(4, len_ci))
+    
+    # k1
+    for i, fn in enumerate(func):
+        k[0, i] = fn(t0, CI, **kwargs)
+    # k2
+    for i, fn in enumerate(func):
+        k[1, i] = fn(t0 + dt / 2, CI + dt * k[0] / 2, **kwargs)
+    # k3
+    for i, fn in enumerate(func):
+        k[2, i] = fn(t0 + dt / 2, CI + dt * k[1] / 2, **kwargs)
+    # k4
+    for i, fn in enumerate(func):
+        k[3, i] = fn(t0 + dt, CI + dt * k[2], **kwargs)
+
+    h = np.zeros(shape=len_ci)
+    for i in range(len_ci):
+        h[i] = (1/6) * (k[0, i] + 2*k[1, i] + 2*k[2, i] + k[3, i]) * dt
+    return h
+
+
 if __name__ == "__main__":
     from math import sin, pi, pow
     import matplotlib.pyplot as plt
 
-    class Mobil:
-        def __init__(self, lenth, mass, init_angle, init_speed, t0, dt, sample):
-            self.mass = mass
-            self.lenth = lenth
+    def test_step():
+        class Mobil:
+            def __init__(self, lenth, mass, init_angle, init_speed, t0, dt, sample):
+                self.mass = mass
+                self.lenth = lenth
 
-            self.angle = (init_angle / 360) * 2 * pi
-            self.speed = (init_speed / 360) * 2 * pi
+                self.angle = (init_angle / 360) * 2 * pi
+                self.speed = (init_speed / 360) * 2 * pi
 
-            self.t = t0
-            self.dt = dt
-            self.tf = t0 + dt * sample
+                self.t = t0
+                self.dt = dt
+                self.tf = t0 + dt * sample
 
-        @staticmethod
-        def pendulum_acc(t, angle, g, lenth):
-            # Time does not interfer
-            return -(g / lenth) * sin(angle)
+            @staticmethod
+            def pendulum_acc(t, angle, g, lenth):
+                # Time does not interfer
+                return -(g / lenth) * sin(angle)
 
-        def p(self):
-            return pow(self.speed * self.lenth, 2) * self.mass
+            def p(self):
+                return pow(self.speed * self.lenth, 2) * self.mass
 
-        def __iter__(self):
-            return self
+            def __iter__(self):
+                return self
 
-        def __next__(self):
-            # self.speed += type(self).pendulum_acc(self.t, self.angle, 1, self.lenth) * dt
-            # Runge Kutta integral
-            self.speed += step(
-                func=type(self).pendulum_acc,
-                t=self.t,
-                h=self.dt,
-                y=self.angle,
-                g=9.81,
-                lenth=self.lenth
-            )
-            # Simple Euler method, x = int(dx/dt) trivial
-            self.angle += self.speed * self.dt
-            self.t += dt
+            def __next__(self):
+                # self.speed += type(self).pendulum_acc(self.t, self.angle, 1, self.lenth) * dt
+                # Runge Kutta integral
+                self.speed += step(
+                    func=type(self).pendulum_acc,
+                    t=self.t,
+                    h=self.dt,
+                    y=self.angle,
+                    g=9.81,
+                    lenth=self.lenth
+                )
+                # Simple Euler method, x = int(dx/dt) trivial
+                self.angle += self.speed * self.dt
+                self.t += dt
 
-            if self.tf < self.t:
-                raise StopIteration
+                if self.tf < self.t:
+                    raise StopIteration
 
-            return self.speed, self.angle, self.t
+                return self.speed, self.angle, self.t
 
-    init_angle = 20 - 90  # degres
-    init_speed = 0
+        init_angle = 20 - 90  # degres
+        init_speed = 0
 
-    t0 = 0
-    dt = 0.01
-    sample = 400
+        t0 = 0
+        dt = 0.01
+        sample = 400
 
-    mobil = Mobil(1, 0.1, init_angle, init_speed, t0, dt, sample)
+        mobil = Mobil(1, 0.1, init_angle, init_speed, t0, dt, sample)
 
-    time_axes = [t0]
-    speed_axes = [(init_speed / 360) * 2 * pi]
-    angle_axes = [(init_angle / 360) * 2 * pi]
-    y_axes = [sin(init_angle) * mobil.lenth]
+        time_axes = [t0]
+        speed_axes = [(init_speed / 360) * 2 * pi]
+        angle_axes = [(init_angle / 360) * 2 * pi]
+        y_axes = [sin(init_angle) * mobil.lenth]
 
-    for ang_sp, ang, t in mobil:
-        speed_axes.append(ang_sp)
-        angle_axes.append(ang)
-        time_axes.append(t)
-        y_axes.append(sin(ang) * mobil.lenth)
-        print(t)
+        for ang_sp, ang, t in mobil:
+            speed_axes.append(ang_sp)
+            angle_axes.append(ang)
+            time_axes.append(t)
+            y_axes.append(sin(ang) * mobil.lenth)
 
-    plt.plot(speed_axes, angle_axes)
-    plt.show()
+        plt.plot(time_axes, angle_axes)
+        plt.show()
