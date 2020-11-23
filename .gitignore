@@ -11,3 +11,6 @@ env
 
 # Egg
 *.egg*
+
+# JetBrain ideas
+.ideas
