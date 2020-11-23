@@ -38,28 +38,30 @@ def integr(t0: float, dt: float, CI: np.ndarray, func: tuple, **kwargs) -> np.nd
 
     See lorentz.py for an example with lorentz attractor system\
     """
-    len_ci = len(CI)
+    
+    shape_ci = np.shape(CI)
+    len_ci = shape_ci[0]
     if len_ci != len(func):
         raise ValueError("func array must have the same size as CI array")
 
-    k = np.zeros(shape=(4, len_ci))
+    k = np.zeros(shape=(4, *shape_ci))
     
     # k1
     for i, fn in enumerate(func):
-        k[0, i] = fn(t0, CI, **kwargs)
+        k[0][i] = fn(t0, CI, **kwargs)
     # k2
     for i, fn in enumerate(func):
-        k[1, i] = fn(t0 + dt / 2, CI + dt * k[0] / 2, **kwargs)
+        k[1][i] = fn(t0 + dt / 2, CI + dt * k[0] / 2, **kwargs)
     # k3
     for i, fn in enumerate(func):
-        k[2, i] = fn(t0 + dt / 2, CI + dt * k[1] / 2, **kwargs)
+        k[2][i] = fn(t0 + dt / 2, CI + dt * k[1] / 2, **kwargs)
     # k4
     for i, fn in enumerate(func):
-        k[3, i] = fn(t0 + dt, CI + dt * k[2], **kwargs)
+        k[3][i] = fn(t0 + dt, CI + dt * k[2], **kwargs)
 
-    h = np.zeros(shape=len_ci)
+    h = np.zeros(shape=shape_ci)
     for i in range(len_ci):
-        h[i] = (1/6) * (k[0, i] + 2*k[1, i] + 2*k[2, i] + k[3, i]) * dt
+        h[i] = (1/6) * (k[0][i] + 2*k[1][i] + 2*k[2][i] + k[3][i]) * dt
     return h
 
 
