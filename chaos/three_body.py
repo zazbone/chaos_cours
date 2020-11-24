@@ -1,4 +1,5 @@
 import numpy as np
+from numpy.linalg import norm
 
 from chaos import runge_kutta as rk
 
@@ -75,7 +76,7 @@ class ThreeBody():
 
 
 def ratio(ra, rb):
-    return (rb - ra) / abs(rb - ra) ** 3
+    return (rb - ra) / norm(rb - ra) ** 3
 
 
 def write_data(writer, fieldnames, gen, time, r, v):
@@ -112,7 +113,7 @@ def solar_sys():
 
     t0 = 0
     t = t0
-    sample = 1024
+    sample = 0b1 << 15
     dt = (4 * 30.5 * 24 * 3600) / 1024  # 4 mois d'étude
 
     with open("result.csv", "w") as csv_file:
@@ -121,7 +122,6 @@ def solar_sys():
             fields_names.extend((f"Body{i}", f"x{i}", f"y{i}", f"z{i}", f"v_x{i}", f"v_y{i}", f"v_z{i}"))
         writer = csv.DictWriter(csv_file, fieldnames=fields_names)
         writer.writeheader()
-
         for i in range(sample):
             write_data(writer, fields_names, i, t, system.r, system.v)
             system.v += rk.integr(t0=t, dt=dt, CI=system.r, func=ThreeBody.a(), m1=system.m[0], m2=system.m[1], m3=system.m[2])
