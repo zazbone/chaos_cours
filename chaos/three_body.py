@@ -12,6 +12,7 @@ D = 3
 
 
 class Body:
+    G = 1
     def __init__(self, r, v, m):
         if np.shape(r) != np.shape(v):
             raise ValueError("Speed and position vector must have same dimension")
@@ -21,16 +22,16 @@ class Body:
 
 
 class ThreeBody():
-    G = 6.7e-11
-
     def __init__(self, r1, r2, r3, v1, v2, v3, m1, m2, m3):
         self.r = np.array([r1, r2, r3])
         self.v = np.array([v1, v2, v3])
         self.m = np.array([m1, m2, m3])
+        self.G = G
 
 
     @classmethod
     def from_config(cls, config: Config):
+        cls.G = config.G
         return cls(
             r1=config.b_pos[0], r2=config.b_pos[1], r3=config.b_pos[2],
             v1=config.b_speed[0], v2=config.b_speed[1], v3=config.b_speed[2],
@@ -41,7 +42,7 @@ class ThreeBody():
         return np.array([
             [self.m[0], 0, 0],
             [0, self.m[1], 0],
-            [0, 0, self.m[0]],
+            [0, 0, self.m[2]],
         ]) * self.v
 
     @classmethod
@@ -81,7 +82,7 @@ def ratio(ra, rb):
     return (rb - ra) / norm(rb - ra) ** 3
 
 
-def write_data(writer, config, system, i, t):
+def write_data(writer, config, system, i, t, acc):
     row = {"gen": i, "time": t}
     for i in range(3):
         if config.get_pos:
@@ -92,6 +93,10 @@ def write_data(writer, config, system, i, t):
             row[f"vx_{i+1}"] = system.v[i][0]
             row[f"vy_{i+1}"] = system.v[i][1]
             row[f"vz_{i+1}"] = system.v[i][2]
+        if config.get_acc:
+            row[f"ax_{i+1}"] = acc[i][0]
+            row[f"ay_{i+1}"] = acc[i][1]
+            row[f"az_{i+1}"] = acc[i][2]
     writer.writerow(row)
 
 
@@ -111,8 +116,9 @@ def tb_main(config_path="out.json"):
 
         for i in range(sample):
             if not i % config.keeped_sample:
-                write_data(writer, config, system, i, t)
-            system.v = system.v + rk.integr(t0=t, dt=dt, CI=system.r, func=ThreeBody.a(), m1=system.m[0], m2=system.m[1], m3=system.m[2])
+                delta_v = rk.integr(t0=t, dt=dt, CI=system.r, func=ThreeBody.a(), m1=system.m[0], m2=system.m[1], m3=system.m[2])
+                write_data(writer, config, system, i, t, delta_v)
+            system.v = system.v + delta_v
             system.r = system.r + rk.integr(t0=t, dt=dt, CI=system.v, func=ThreeBody.dr())
             t += dt
 
