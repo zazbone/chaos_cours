@@ -109,7 +109,7 @@ def tb_main(config_path="out.json"):
     sample = config.sample
     dt = config.tf / sample  # 4 mois d'étude
 
-    with open("result.csv", "w") as csv_file:
+    with open("result.csv", "w", newline='') as csv_file:
         fields_names = _create_fields(config)
         writer = csv.DictWriter(csv_file, fieldnames=fields_names)
         writer.writeheader()
