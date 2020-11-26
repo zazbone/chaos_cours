@@ -1,0 +1,1 @@
+from ._config import new_config_file

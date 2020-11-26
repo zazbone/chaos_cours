@@ -1,7 +1,7 @@
 {
   "dimensions": 3,
   "sample_power": 16,
-  "keep_sample_powr": 6,
+  "keep_sample_pow": 6,
   "duration(s)": 3600,
   "G": 1,
 
