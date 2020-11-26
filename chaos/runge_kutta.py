@@ -7,11 +7,14 @@ def integr(t0: float, dt: float, CI: np.ndarray, func: tuple, **kwargs) -> np.nd
     Compute only one step
 
     t0: init_time
-        (must be an argument of your integration function, event if time does not interfer in the system)
+        (must be an argument of your integration function, \
+    event if time does not interfer in the system)
     dt: time interval of the numerical integration
     CI: List of the initial condition values
-    func: function array that contains all function to integrate, can be any sequence of callable objects
-    **kwargs: all possible fuctions extra arguments constant (name all your arguments to avoid conflicts)
+    func: function array that contains all function to integrate, \
+    can be any sequence of callable objects
+    **kwargs: all possible fuctions extra arguments constant \
+    (name all your arguments to avoid conflicts)
 
     return: numpy ndarray of shape=n where n is the numbre of init conditions
         Contains CI integral
