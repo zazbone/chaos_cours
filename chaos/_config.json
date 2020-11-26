@@ -1,0 +1,34 @@
+{
+  "dimensions": 3,
+  "sample_power": 16,
+  "keep_sample_powr": 6,
+  "duration(s)": 3600,
+  "G": 1,
+
+  "yield": {
+    "position": true,
+    "speed": true,
+    "acceleration": false
+  },
+
+  "parameters": {
+    "Body1": {
+      "name": "Body1",
+      "mass": 1,
+      "position": [0, 0, 0],
+      "speed": [0, 0, 0]
+    },
+    "Body2": {
+      "name": "Body2",
+      "mass": 1,
+      "position": [1, 0, 0],
+      "speed": [0, -1, 0]
+    },
+    "Body3": {
+      "name": "Body3",
+      "mass": 1,
+      "position": [-1, 0, 0],
+      "speed": [0, 1, 0]
+    }
+  }
+}
