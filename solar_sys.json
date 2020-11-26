@@ -1,8 +1,8 @@
 {
     "dimensions": 3,
-    "sample_power": 14,
+    "sample_power": 8,
     "keep_sample_pow": 0,
-    "duration(s)": 3600,
+    "duration(s)": 36,
     "G": 0.66,
     "yield": {
         "position": true,
