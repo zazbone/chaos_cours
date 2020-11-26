@@ -46,7 +46,7 @@ class ThreeBody():
         ]) * self.v
 
     @classmethod
-    def a(cls):
+    def dv(cls):
         return cls.a1, cls.a2, cls.a3
 
     @classmethod
@@ -116,7 +116,7 @@ def tb_main(config_path="out.json"):
 
         for i in range(sample):
             if not i % config.keeped_sample:
-                delta_v = rk.integr(t0=t, dt=dt, CI=system.r, func=ThreeBody.a(), m1=system.m[0], m2=system.m[1], m3=system.m[2])
+                delta_v = rk.integr(t0=t, dt=dt, CI=system.r, func=ThreeBody.dv(), m1=system.m[0], m2=system.m[1], m3=system.m[2])
                 write_data(writer, config, system, i, t, delta_v)
             system.v = system.v + delta_v
             system.r = system.r + rk.integr(t0=t, dt=dt, CI=system.v, func=ThreeBody.dr())
