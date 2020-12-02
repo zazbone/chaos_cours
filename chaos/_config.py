@@ -7,6 +7,7 @@ from json import load, dump
 MOD_PATH = Path(chaos.__file__).parent
 USER_PATH = Path()
 
+
 class Config:
     def __init__(self, json_path=""):
         if json_path:
@@ -34,13 +35,12 @@ class Config:
         self.b_mass = [b["mass"] for b in conf["parameters"].values()]
         self.b_pos = [b["position"] for b in conf["parameters"].values()]
         self.b_speed = [b["speed"] for b in conf["parameters"].values()]
-                
-    
+
 
 def new_config_file(path="out.json"):
     with open(MOD_PATH / "_config.json", "r") as json_defaut:
         default_config = load(json_defaut)
-    
+
     path = Path(path).with_suffix(".json")
     if path.is_absolute:
         with open(path, "w") as new_config:

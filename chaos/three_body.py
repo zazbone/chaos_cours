@@ -13,6 +13,7 @@ D = 3
 
 class Body:
     G = 1
+
     def __init__(self, r, v, m):
         if np.shape(r) != np.shape(v):
             raise ValueError("Speed and position vector must have same dimension")
@@ -27,7 +28,6 @@ class ThreeBody():
         self.v = np.array([v1, v2, v3])
         self.m = np.array([m1, m2, m3])
         self.G = G
-
 
     @classmethod
     def from_config(cls, config: Config):
@@ -109,7 +109,7 @@ def tb_main(config_path="out.json"):
     sample = config.sample
     dt = config.tf / sample  # 4 mois d'étude
 
-    with open("result.csv", "w", newline='') as csv_file:
+    with open(config.config_name.with_suffix(".csv"), "w", newline='') as csv_file:
         fields_names = _create_fields(config)
         writer = csv.DictWriter(csv_file, fieldnames=fields_names)
         writer.writeheader()
