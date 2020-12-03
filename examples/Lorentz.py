@@ -3,6 +3,9 @@ import chaos.runge_kutta as rk
 import numpy as np
 
 import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
+
+from pathlib import Path
 
 
 # Time does not interfer
@@ -38,4 +41,9 @@ def lorentz():
 
     ax = plt.axes(projection="3d")
     ax.plot3D(xs=TRAJECTORY[0], ys=TRAJECTORY[1], zs=TRAJECTORY[2], color="blue")
+    path = Path(__file__).parent / "Lorentz" / "fig.png"
+    plt.savefig(path)
     plt.show()
+
+
+lorentz()

@@ -1,6 +1,6 @@
 from chaos import tb_main
-from chaos.data_proc import plot_xy
+from pathlib import Path
 
 
-tb_main("solar_sys/solar_sys")
-plot_xy("solar_sys/solar_sys", "x_1", "y_1")
+path = Path("solar_sys") / "solar_sys"
+tb_main(path)

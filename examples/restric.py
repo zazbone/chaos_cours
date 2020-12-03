@@ -1,6 +1,7 @@
 from chaos import tb_main
-from chaos.data_proc import plot_xy
+from pathlib import Path
 
 
-tb_main("restric/restric")
-plot_xy("restric/restric", "x_2", "y_2")
+path = Path(__file__).parent / "restric" / "restric"
+tb_main(path)
+

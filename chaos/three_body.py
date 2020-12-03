@@ -3,6 +3,7 @@ from numpy.linalg import norm
 
 from chaos import runge_kutta as rk
 from chaos._config import Config
+from chaos.data_proc import init_frame, write_data
 
 import csv
 
@@ -82,24 +83,6 @@ def ratio(ra, rb):
     return (rb - ra) / norm(rb - ra) ** 3
 
 
-def write_data(writer, config, system, i, t, acc):
-    row = {"gen": i, "time": t}
-    for i in range(3):
-        if config.get_pos:
-            row[f"x_{i+1}"] = system.r[i][0]
-            row[f"y_{i+1}"] = system.r[i][1]
-            row[f"z_{i+1}"] = system.r[i][2]
-        if config.get_speed:
-            row[f"vx_{i+1}"] = system.v[i][0]
-            row[f"vy_{i+1}"] = system.v[i][1]
-            row[f"vz_{i+1}"] = system.v[i][2]
-        if config.get_acc:
-            row[f"ax_{i+1}"] = acc[i][0]
-            row[f"ay_{i+1}"] = acc[i][1]
-            row[f"az_{i+1}"] = acc[i][2]
-    writer.writerow(row)
-
-
 def tb_main(config_path="out.json"):
     config = Config(config_path)
     system = ThreeBody.from_config(config)
@@ -109,28 +92,14 @@ def tb_main(config_path="out.json"):
     sample = config.sample
     dt = config.tf / sample  # 4 mois d'étude
 
-    with open(config.config_name.with_suffix(".csv"), "w", newline='') as csv_file:
-        fields_names = _create_fields(config)
-        writer = csv.DictWriter(csv_file, fieldnames=fields_names)
-        writer.writeheader()
+    data_frame = init_frame(config)
 
-        for i in range(sample):
-            if not i % config.keeped_sample:
-                delta_v = rk.integr(t0=t, dt=dt, CI=system.r, func=ThreeBody.dv(), m1=system.m[0], m2=system.m[1], m3=system.m[2])
-                write_data(writer, config, system, i, t, delta_v)
-            system.v = system.v + delta_v
-            system.r = system.r + rk.integr(t0=t, dt=dt, CI=system.v, func=ThreeBody.dr())
-            t += dt
-
-
-def _create_fields(config: Config):
-    fields_names = ["gen", "time"]
-    for i in range(3):
-        fields_names.extend([config.b_name[i]])
-        if config.get_pos:
-            fields_names.extend([f"x_{i+1}", f"y_{i+1}", f"z_{i+1}"])
-        if config.get_speed:
-            fields_names.extend([f"vx_{i+1}", f"vy_{i+1}", f"vz_{i+1}"])
-        if config.get_acc:
-            fields_names.extend([f"ax_{i+1}", f"ay_{i+1}", f"az_{i+1}"])
-    return fields_names
+    for i in range(sample):
+        if not i % config.keeped_sample:
+            delta_v = rk.integr(t0=t, dt=dt, CI=system.r, func=ThreeBody.dv(), m1=system.m[0], m2=system.m[1], m3=system.m[2])
+            data_frame = write_data(data_frame, config, system, i, t, delta_v)
+        system.v = system.v + delta_v
+        system.r = system.r + rk.integr(t0=t, dt=dt, CI=system.v, func=ThreeBody.dr())
+        t += dt
+    
+    data_frame.to_csv(config_path.with_suffix(".csv"))
