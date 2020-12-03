@@ -3,7 +3,7 @@ from numpy.linalg import norm
 
 from chaos import runge_kutta as rk
 from chaos._config import Config
-from chaos.data_proc import init_frame, write_data
+from chaos.data_proc import init_frame, write_data, plot_frame
 
 import csv
 
@@ -97,9 +97,10 @@ def tb_main(config_path="out.json"):
     for i in range(sample):
         if not i % config.keeped_sample:
             delta_v = rk.integr(t0=t, dt=dt, CI=system.r, func=ThreeBody.dv(), m1=system.m[0], m2=system.m[1], m3=system.m[2])
-            data_frame = write_data(data_frame, config, system, i, t, delta_v)
+            write_data(data_frame, config, system, i // config.keeped_sample, t, delta_v)
         system.v = system.v + delta_v
         system.r = system.r + rk.integr(t0=t, dt=dt, CI=system.v, func=ThreeBody.dr())
         t += dt
     
     data_frame.to_csv(config_path.with_suffix(".csv"))
+    plot_frame(data_frame, config, ["x_2", "y_2"],)
