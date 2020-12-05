@@ -5,30 +5,15 @@ from chaos import runge_kutta as rk
 from chaos._config import Config
 from chaos.data_proc import init_frame, write_data, plot_frame
 
-import csv
-
-
-G = 1
-D = 3
-
-
-class Body:
-    G = 1
-
-    def __init__(self, r, v, m):
-        if np.shape(r) != np.shape(v):
-            raise ValueError("Speed and position vector must have same dimension")
-        self.r = np.array(r)
-        self.v = np.array(v)
-        self.m = m
-
 
 class ThreeBody():
     def __init__(self, r1, r2, r3, v1, v2, v3, m1, m2, m3):
         self.r = np.array([r1, r2, r3])
         self.v = np.array([v1, v2, v3])
         self.m = np.array([m1, m2, m3])
-        self.G = G
+
+    def __str__(self):
+        return "\n".join((str(i) for i in self.r))
 
     @classmethod
     def from_config(cls, config: Config):
@@ -39,44 +24,16 @@ class ThreeBody():
             m1=config.b_mass[0], m2=config.b_mass[1], m3=config.b_mass[2],
         )
 
-    def p(self):
-        return np.array([
-            [self.m[0], 0, 0],
-            [0, self.m[1], 0],
-            [0, 0, self.m[2]],
-        ]) * self.v
 
-    @classmethod
-    def dv(cls):
-        return cls.a1, cls.a2, cls.a3
+def dv(t, r, m, G):
+    a1 = G * (m[1] * ratio(r[0], r[1]) + m[2] * ratio(r[0], r[2]))
+    a2 = G * (m[0] * ratio(r[1], r[0]) + m[2] * ratio(r[1], r[2]))
+    a3 = G * (m[0] * ratio(r[2], r[0]) + m[1] * ratio(r[2], r[1]))
+    return np.array([a1, a2, a3])
 
-    @classmethod
-    def a1(cls, t, r, m1, m2, m3):
-        return cls.G * (m2 * ratio(r[0], r[1]) + m3 * ratio(r[0], r[2]))
 
-    @classmethod
-    def a2(cls, t, r, m1, m2, m3):
-        return cls.G * (m1 * ratio(r[1], r[0]) + m3 * ratio(r[1], r[2]))
-
-    @classmethod
-    def a3(cls, t, r, m1, m2, m3):
-        return cls.G * (m1 * ratio(r[2], r[0]) + m2 * ratio(r[2], r[1]))
-
-    @classmethod
-    def dr(cls):
-        return cls.dr1, cls.dr2, cls.dr3
-
-    @staticmethod
-    def dr1(t, v):
-        return v[0]
-
-    @staticmethod
-    def dr2(t, v):
-        return v[1]
-
-    @staticmethod
-    def dr3(t, v):
-        return v[2]
+def dr(t, v):
+    return v
 
 
 def ratio(ra, rb):
@@ -89,18 +46,17 @@ def tb_main(config_path="out.json"):
 
     t0 = 0
     t = t0
-    sample = config.sample
-    dt = config.tf / sample  # 4 mois d'étude
+    dt = config.dt()
 
     data_frame = init_frame(config)
 
-    for i in range(sample):
+    for i in range(config.sample):
+        delta_v = rk.integr(t0=t, dt=dt, CI=system.r, func=dv, m=system.m, G=config.G)
         if not i % config.keeped_sample:
-            delta_v = rk.integr(t0=t, dt=dt, CI=system.r, func=ThreeBody.dv(), m1=system.m[0], m2=system.m[1], m3=system.m[2])
-            write_data(data_frame, config, system, i // config.keeped_sample, t, delta_v)
-        system.v = system.v + delta_v
-        system.r = system.r + rk.integr(t0=t, dt=dt, CI=system.v, func=ThreeBody.dr())
+            write_data(data_frame, config, system, i, t, delta_v)
+        system.v = system.v + delta_v  # Numpy error with in place add
+        system.r = system.r + rk.integr(t0=t, dt=dt, CI=system.v, func=dr)
         t += dt
-    
+
     data_frame.to_csv(config_path.with_suffix(".csv"))
-    plot_frame(data_frame, config, ["x_2", "y_2"],)
+    plot_frame(data_frame, config, ["x_2", "y_2"])
