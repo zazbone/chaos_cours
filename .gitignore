@@ -15,4 +15,5 @@ env
 # JetBrain ideas
 .idea
 
-result.csv
+*.csv
+*.png
