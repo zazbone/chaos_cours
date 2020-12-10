@@ -1,9 +1,9 @@
 {
     "dimensions": 2,
-    "sample_power": 15,
+    "sample_power": 10,
     "keep_sample_pow": 0,
-    "duration(s)": 15811200000,
-    "G": 6.67e-11,
+    "duration(s)": 100,
+    "G": 1,
     "yield": {
         "position": true,
         "speed": false,
@@ -12,43 +12,43 @@
     "parameters": {
         "Body1": {
             "name": "Terre",
-            "mass": 7.342e22,
+            "mass": 3.98199e14,
             "position": [
-                149597888500,
+                1.49597e11,
                 0,
                 0
             ],
             "speed": [
                 0,
-                29783,
+                2.978e4,
                 0
             ]
         },
         "Body2": {
             "name": "Soleil",
-            "mass": 1e41,
+            "mass": 0,
             "position": [
-                0,
+                1.49e11,
                 0,
                 0
             ],
             "speed": [
                 0,
-                0,
+                3.078e4,
                 0
             ]
         },
         "Body3": {
             "name": "Moon",
-            "mass": 0,
+            "mass": 4.9011e12,
             "position": [
-                149982286500,
+                1.4998e11,
                 0,
                 0
             ],
             "speed": [
                 0,
-                30805,
+                3.078e4,
                 0
             ]
         }

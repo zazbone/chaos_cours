@@ -57,6 +57,6 @@ def write_data(data_frame, config, system, sample, t, acc):
 
 def plot_frame(data_frame, config, axes=[]):
     plt.plot(data_frame["x_1"], data_frame["y_1"], color="red")
-    plt.plot(data_frame["x_2"], data_frame["y_2"], color="blue")
+    plt.plot(data_frame["x_2"], data_frame["y_2"], color="blue", marker='o')
     plt.plot(data_frame["x_3"], data_frame["y_3"], color="green")
     plt.savefig(config.config_name.with_suffix(".png"))

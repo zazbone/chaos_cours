@@ -16,3 +16,5 @@ def lozi_gen(a, b):
 
 def lozi(a=1.2, b=0.5):
     from_double_gen(lozi_gen, a, b)
+
+
