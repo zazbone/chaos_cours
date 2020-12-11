@@ -1,18 +1,18 @@
 {
     "dimensions": 2,
-    "sample_power": 15,
+    "sample_power": 18,
     "keep_sample_pow": 0,
-    "duration(s)": 15811200000,
+    "duration(s)": 1261440000,
     "G": 6.67e-11,
     "yield": {
         "position": true,
-        "speed": false,
-        "acceleration": false
+        "speed": true,
+        "acceleration": true
     },
     "parameters": {
         "Body1": {
             "name": "Terre",
-            "mass": 7.342e22,
+            "mass": 5e24,
             "position": [
                 149597888500,
                 0,
@@ -39,16 +39,16 @@
             ]
         },
         "Body3": {
-            "name": "Moon",
+            "name": "Mars",
             "mass": 0,
             "position": [
-                149982286500,
+                227944000000,
                 0,
                 0
             ],
             "speed": [
                 0,
-                30805,
+                26500,
                 0
             ]
         }

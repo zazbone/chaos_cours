@@ -1,7 +1,7 @@
 {
     "dimensions": 2,
-    "sample_power": 10,
-    "keep_sample_pow": 0,
+    "sample_power": 20,
+    "keep_sample_pow": 10,
     "duration(s)": 20,
     "G": 1,
     "yield": {

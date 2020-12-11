@@ -51,10 +51,11 @@ def tb_main(config_path="out.json"):
     data_frame = init_frame(config)
 
     for i in range(config.sample):
-        delta_v = rk.integr(t0=t, dt=dt, CI=system.r, func=dv, m=system.m, G=config.G)
+        acc = dv(t, system.r, system.m, config.G)
         if not i % config.keeped_sample:
-            write_data(data_frame, config, system, i, t, delta_v)
-        system.v = system.v + delta_v  # Numpy error with in place add
+            write_data(data_frame, config, system, i, t, acc)
+        # numpy get error with in place add
+        system.v = system.v + rk.integr(t0=t, dt=dt, CI=system.r, func=dv, m=system.m, G=config.G)
         system.r = system.r + rk.integr(t0=t, dt=dt, CI=system.v, func=dr)
         t += dt
 
