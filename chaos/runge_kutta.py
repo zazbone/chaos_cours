@@ -17,5 +17,5 @@ def integr(t0: float, dt: float, CI, func, **kwargs):
     k1 = func(t0, CI, **kwargs)
     k2 = func(t0 + dt / 2, CI + dt * k1 / 2, **kwargs)
     k3 = func(t0 + dt / 2, CI + dt * k2 / 2, **kwargs)
-    k4 = func(t0 + dt, CI + dt * k3 / 2, **kwargs)
+    k4 = func(t0 + dt, CI + dt * k3, **kwargs)
     return (1/6) * (k1 + 2*k2 + 2*k3 + k4) * dt
