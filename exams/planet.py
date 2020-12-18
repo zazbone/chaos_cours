@@ -26,38 +26,6 @@ class Planetoid:
     def vec_rb(self, t):
         return self.rb * rot_mat(self.omega * t)
 
-    def acc(self, t, planet_pos):
-        MA = self.vec_ra(t) - planet_pos
-        MB = self.vec_rb(t) - planet_pos
-        return self.mag * MA / np.power(norm(MA),3) + self.mbg * MB / np.power(norm(MB),3)
-
-    def rk4(self, t0, dt):
-        """\
-        Runge Kutta 4 integration methode for the planetoid acc.
-        Only one step of dt duration computed\
-        """
-        k1 = self.acc(t0, self.r)
-        k2 = self.acc(t0 + dt/2, self.r + k1 * dt/2)
-        k3 = self.acc(t0 + dt/2, self.r + k2 * dt/2)
-        k4 = self.acc(t0 + dt, self.r + k3 * dt)
-        return (1/6) * (k1 + 2*k2 + 2*k3 + k4) * dt
-
-    @staticmethod
-    def delta_v(v, dt):
-        k1 = v
-        k2 = v + k1 * dt / 2
-        k3 = v + k2 * dt / 2
-        k4 = v + k1 * dt
-        return (1/6) * (k1 + 2*k2 + 2*k3 + k4) * dt
-
-    def trajectory(self, r0, t0, dt, sample):
-        self.r = r0
-        self.v = np.zeros(2)
-        for t in np.linspace(t0, t0 + dt * sample, sample):
-            yield self.r, self.vec_ra(t), self.vec_rb(t)
-            self.v = self.v + self.rk4(t, dt)
-            self.r = self.r + Planetoid.delta_v(self.v, dt)
-
 
 def rot_mat(angle):
     return np.array([
