@@ -26,6 +26,7 @@ def ratio(ra, rb):
     return (rb - ra) / norm(rb - ra) ** 3
 
 def main(config):
+    plt.clf()
     system = ThreeBody(config)
     dt = config["duration"] / config["samples"]
     T = np.linspace(0, config["duration"], config["samples"])

@@ -74,6 +74,7 @@ def calc_spd(_t, v):
     return v
 
 def main():
+    plt.clf()
     with open("planet.json", "r") as js:
         config = load(js)
     planetoid = Planetoid(**config)
@@ -101,6 +102,3 @@ def main():
     plt.title("Planetoid mouvement")
 
     plt.savefig("planetoid.png")
-
-
-main()
