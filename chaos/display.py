@@ -39,6 +39,6 @@ def plot_xy(path):
             y2.append(row["y_2"])
             y3.append(row["y_3"])
         plt.plot(x1, y1)
-        plt.plot(x2, y2, marker='o')
+        plt.plot(x2, y2)
         plt.plot(x3, y3)
         plt.savefig(Path(path).with_suffix(".png"))
